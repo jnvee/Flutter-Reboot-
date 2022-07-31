@@ -1,33 +1,46 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp( MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-   MyApp({Key? key}) : super(key: key);
+  MyApp({Key? key}) : super(key: key);
 
-  var colorName = ValueNotifier('Tap a Button!');
-  var colorcolor = Colors.black;
+  var buttonAttributes = ValueNotifier(
+    ButtonAttributes(
+      'Tap a Button',
+      Colors.black,
+    ),
+  );
 
-   Widget ColorButton(buttonColor, buttonString, stringColor){
-     return InkWell(
-       onTap: (){
-         colorName.value = buttonString;
-         colorcolor = stringColor;
-       },
-       child: Container(
-         width: 100,
-         height: 50,
-         decoration: BoxDecoration(
-             color: buttonColor, borderRadius: BorderRadius.circular(20)),
-         child:
-         Center(
-             child: Text(buttonString,
-                 style: TextStyle(color: stringColor, fontSize: 20, fontWeight: FontWeight.bold,))),
-       ),
-     );
-   }
+  Widget getButton(buttonColor, buttonString, stringColor) {
+    return InkWell(
+      onTap: () {
+        buttonAttributes.value = ButtonAttributes(
+          buttonString,
+          stringColor,
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: buttonColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Center(
+          child: Text(
+            buttonString,
+            style: TextStyle(
+              color: stringColor,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +48,9 @@ class MyApp extends StatelessWidget {
       title: 'Button App',
       home: Scaffold(
         appBar: AppBar(
-          title: const Center(child: Text('Button App')),
+          title: const Center(
+            child: Text('Button App'),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(25.0),
@@ -44,23 +59,52 @@ class MyApp extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ColorButton(Colors.yellow, 'Blue', Colors.blue),
-                  ColorButton(Colors.green, 'Yellow', Colors.yellow),
-                  ColorButton(Colors.blue, 'Green', Colors.green)
+                  getButton(
+                    Colors.yellow,
+                    'Blue',
+                    Colors.blue,
+                  ),
+                  getButton(
+                    Colors.green,
+                    'Yellow',
+                    Colors.yellow,
+                  ),
+                  getButton(
+                    Colors.blue,
+                    'Green',
+                    Colors.green,
+                  ),
                 ],
               ),
-              ValueListenableBuilder(valueListenable: colorName,
-                  builder: (context, value, child){
-                return Padding(
-                  padding: const EdgeInsets.only(top: 200.0),
-                  child: Text('$value', style: TextStyle(fontSize: 50, color: colorcolor)),
-                );
-                  })
-
+              ValueListenableBuilder(
+                valueListenable: buttonAttributes,
+                builder: (context, ButtonAttributes value, child) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 200.0),
+                    child: Text(
+                      value.colorName,
+                      style: TextStyle(
+                        fontSize: 50,
+                        color: value.color,
+                      ),
+                    ),
+                  );
+                },
+              )
             ],
           ),
         ),
       ),
     );
   }
+}
+
+class ButtonAttributes {
+  ButtonAttributes(
+    this.colorName,
+    this.color,
+  );
+
+  String colorName;
+  Color color;
 }
